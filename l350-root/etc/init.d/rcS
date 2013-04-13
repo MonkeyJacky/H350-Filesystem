@@ -1,0 +1,11 @@
+#!/bin/sh
+
+#mkdir -p /boot/local
+
+#for i in bin etc home lib sbin share; do mkdir -p /usr/local/$i; done
+
+#if [ ! -f /usr/local/etc/timezone ]; then
+#	echo "MST7MDT" > /usr/local/etc/timezone
+#fi
+/usr/local/yohu_desktop/setbvol.bin&
+

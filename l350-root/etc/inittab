@@ -1,0 +1,45 @@
+
+# Startup the system
+::sysinit:/bin/mount -t proc proc /proc
+::sysinit:/bin/mount -t sysfs sysfs /sys
+::sysinit:/bin/mount -o size=64k,mode=0755 -t tmpfs tmpfs /dev
+::sysinit:/bin/mkdir -p /dev/pts
+::sysinit:/bin/mount -o mode=0620 -t devpts devpts /dev/pts
+::sysinit:/bin/mount -t tmpfs tmpfs /tmp
+::sysinit:/bin/mount -t tmpfs tmpfs /var
+
+
+::sysinit:/bin/echo /sbin/mdev > /proc/sys/kernel/hotplug
+::sysinit:/sbin/mdev -s
+
+
+# Logging junk
+::sysinit:/sbin/syslogd -C
+::sysinit:/sbin/klogd
+
+
+#Mount appfs
+::sysinit:/bin/mount /dev/mmcblk0p2 /usr/mtdblock3  -t ext3  -o ro
+::sysinit:/bin/mount /dev/mmcblk0p3 /usr/mtdblock4  -o rw
+::sysinit:/bin/mount /dev/mmcblk0p4 /mnt/memory -t vfat -o rw,utf8
+::sysinit:/bin/mknod  /dev/tcsm c 238 73
+::sysinit:/bin/mkdir -p /var/run
+::sysinit:/bin/mkdir -p /var/run/wpa_supplicant
+::sysinit:/boot/udc_service.bin&
+
+
+# Launch the main application
+tty1::respawn:/boot/test.sh
+# Put a getty on the serial port
+ttyS2::respawn:/sbin/getty -L ttyS2 57600 vt100
+
+
+# Stuff to do for the 3-finger salute
+::ctrlaltdel:/sbin/reboot
+
+# Stuff to do before rebooting
+null::shutdown:/usr/bin/killall klogd
+null::shutdown:/usr/bin/killall syslogd
+null::shutdown:/bin/umount -a -r
+null::shutdown:/sbin/swapoff -a
+

@@ -1,0 +1,35 @@
+#!/bin/sh
+#KJH add poweroff handler
+
+case $1 in
+	poweroff)
+                cd /
+		killall test.sh test.dge
+		killall wpa_supplicant
+		killall hostapd
+                MMC_NAME=`cat /var/MMCNAME`
+                MMC_STATUS=`cat /proc/jz/mmc`
+                sleep 1
+                /boot/local/sbin/show_pic.dge
+		sleep 1
+                sync
+                /boot/local/sbin/flushcache /dev/mmcblk0p4
+                if [ $MMC_NAME != "no" ] && [ $MMC_STATUS == "INSERT" ]
+                then 
+                  /boot/local/sbin/flushcache /dev/$MMC_NAME
+                fi
+                sleep 2
+
+                umount /usr/mtdblock3
+                umount /usr/mtdblock4
+                umount /mnt/memory
+                if [ $MMC_NAME != "no" ] && [ $MMC_STATUS == "INSERT" ]
+                then
+                  umount /mnt/mmc
+                fi
+                echo "poweroff script..."
+		poweroff
+		;;
+	*)
+		;;
+esac
