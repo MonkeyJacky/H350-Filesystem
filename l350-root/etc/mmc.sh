@@ -2,7 +2,12 @@
 
 case "$ACTION" in
 	add|"")
-	if [ -e /dev/mmcblk1 ]
+	if [ -e /dev/mmcblk1p1 ]
+	then
+	    echo "mmcblk1" > /var/MMCNAME
+	    /bin/umount /mnt/mmc
+	    /bin/mount /dev/mmcblk1p1 /mnt/mmc
+	elif [ -e /dev/mmcblk1 ]
 	then
 		echo "mmcblk1" > /var/MMCNAME
 		/bin/umount /mnt/mmc
